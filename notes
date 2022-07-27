@@ -1,1 +1,33 @@
-gfdzfdghigufgdzxcvhjiiouytfghdcxvbk
+#Day 1 -- Exploit Research
+id
+hostname
+
+#operation systems information
+cat /etc/os-release
+lsb_release -a
+
+#kernel version
+uname -a
+hostnamectl
+
+exploit-db.com
+
+#Day 1 -- Network Recon
+
+#install python packages
+sudo apt-get install python-lxml python-requests python3-pip -y
+sudo apt-get install python3-lxml ( or run script with python not python3)
+
+######## web.py ########
+import lxml.html
+import requests
+
+page = requests.get('http://quotes.toscrape.com')
+tree = lxml.html.fromstring(page.content)
+
+authors = tree.xpath('//small[@class="author"]/text()')
+
+print ('Authors: ',authors)
+######## web.py ########
+
+
