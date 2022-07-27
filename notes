@@ -32,15 +32,61 @@ print ('Authors: ',authors)
 
 
 
-
+#quotes to scrape
 #w3schools.com/html/
 #understanding html tags
 
+##altering the script when looking for tags on 2nd page
+#change the page vaiable to the updated link
+page = requests.get('http://quotes.toscrape.com/page/2/')
+#change the author variable 
+labels = tree.xpath('//a[@class="tag"]/text()')
+#alter print statement too
 
 
 
 
+#Day 1 -- recon/scanning
 
+1. Host Discovery (Ping Sweep)
+BASH:  for i in {1..254} ;do (ping -c 1 192.168.65.$i | grep "bytes from" &) ;done
+
+2. Host Enumeration (Port scanning)
+nmap -Pn -T5 192.168.65.20 -p-
+  -Pn = no host discovery
+  -T0 to -T5 = speed
+  -p- = scan all pors
+  
+3. Host Interrogration (service)
+nmap -Pn -T5 -sV 192.168.65.20 -p 21-23,80
+  -sV  = the service version
+   #do not have to banner grab with this
+   
+
+
+
+#nmap nse
+https://nmap.org/book/man-nse.html
+
+#nmap scripts storage in linux
+/usr/share/nmap/scripts
+
+nmap --script <filename>|<category>|<directory>
+nmap --script-help "ftp-* and discovery"
+nmap --script-args <args>
+nmap --script-args-file <filename>
+nmap --script-help <filename>|<category>|<directory>
+nmap --script-trace
+
+
+#ls /usr/share/nmap/scripts | grep "banner"
+nmap -Pn -T5 --script banner.nse 192.168.65.20 -p 21-23,80
+
+nmap -Pn -T5 --script discovery 192.168.65.20 -p 21-23,80
+
+nmap -Pn -T5 --script "discovery or safe" 192.168.65.20 -p 21-23,80
+
+nmap -Pn -T5 --script ftp* 192.168.65.20 -p 21-23,80
 
 
 
