@@ -350,6 +350,81 @@ DROP INDEX      deletes an index
 UNION           Used to combine the result-set of two or more SELECT statements  <===============
 
 #https://www.w3schools.com/SQl/sql_syntax.asp
+ 
+#going to pair union command with select command
+
+
+#Demo
+mysql 
+mysql --user=<username> --pass=<password> #use if you do not have access
+
+#semi colon required at end of command
+#show databases on the machine
+show databases; 
+
+#default databases
+information_schema: Database of database, provides list od all databases, tables, and columns
+mysql: mysql user list
+performance_schema: metrics of SQL server
+
+#show tables in a database
+show tables from information_schema;
+
+#view column in a table from a datbase
+select * from session.Tires;
+
+#default SQL statement
+select <column> from <database>.<table>;
+
+#select on a certain column
+select name,size from session.Tires;
+
+#nesting commands
+select * session.Tires; select * from session.car;
+
+#combining/joining commands
+select * session.Tires UNION select * from session.car;
+#could produce an error if there is a different number of columns
+#have to either add or subtract columns from a table
+
+#adding columns to union
+select *,1,2 from session.Tires UNION select * from session.car;
+select * from session.car UNION select *,null,null from session.Tires;
+#took the column name from Tires because it is listed first
+
+#subtract columns to union
+select * from session.Tires UNION select carid,name,type,cost from session.car;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
