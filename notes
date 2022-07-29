@@ -332,8 +332,24 @@ cat /var/www/.ssh/authorized_keys
 ssh www-data@10.50.41.203
 
 
+##Day 3 -- SQL Injections
 
+#standard commands
+USE             select the DB you would like to use.
+SELECT          extracts data from a database        <===========
+UPDATE          updates data in a database
+DELETE          deletes data from a database
+INSERT INTO     inserts new data into a database
+CREATE DATABASE creates a new database
+ALTER DATABASE  modifies a database
+CREATE TABLE    creates a new table
+ALTER TABLE     modifies a table
+DROP TABLE      deletes a table
+CREATE INDEX    creates an index (search key)
+DROP INDEX      deletes an index
+UNION           Used to combine the result-set of two or more SELECT statements  <===============
 
+#https://www.w3schools.com/SQl/sql_syntax.asp
 
 
 
