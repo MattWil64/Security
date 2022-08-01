@@ -676,6 +676,57 @@ http://10.50.21.1/uniondemo.php?Selection=2 UNION select table_schema,column_nam
 http://10.50.21.1/uniondemo.php?Selection=2 UNION select table_schema,column_name,table_name from information_schema.columns WHERE table_schema='session'; #
 
 
+=======================================================================================================================================================
+
+reverse engineering demo #1
+
+r = 64-bit
+
+MEM1:
+    mov rax, 2   rax = 2
+    mov rbx, 3   rax = 2, rbx = 3
+    mov rax, 0   rax = 0, rbx = 3
+    jmp MEM2     go to MEM2
+MEM2:
+    cmp rax, 7   rax = 7, rbx = 12
+       result: 7-7 = 0
+       (cmp changes flags register)
+       flags register:
+       zero: ON
+       carry: off
+       sign: OFF
+    je MEM4      condition is meet, go to MEM4
+    (jump if equal: if zero flag is on)                 
+MEM3:
+    mov rbx, 3   rax = 0, rbx = 3
+    add rbx, 9   rax = 0, rbx = 12
+    add rax, 1   rax = 7, rbx = 12
+    jmp MEM2    unconditional jump to MEM 2
+MEM4:
+    mov rax, 0   rax = 0, rbx = 12
+    ret
+Clean Exit Code 0
+return 0
+
+#there was a loop until the last condition was met that sent us to the exit code
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
