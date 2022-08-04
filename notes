@@ -760,7 +760,7 @@ Enter a string:
 #use ghidra
 
 #gdb
---$ gdp <binaryname>
+--$ gdb <binaryname>
 gdb-peda$ 
 
 ## comment out the source line
