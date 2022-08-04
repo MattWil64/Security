@@ -725,6 +725,128 @@ return 0
 9. note where the new file will be saved
 10. run that shit
 
+========================================================================================================================
+
+## Day7 --Exploit Development
+
+--Static Analysis
+file <binaryname>
+strings -n 10 <binaryname>
+
+--$ strings -n 10 func | less
+Potential Artifacts:  #log any suscpicous items
+_IO_stdin_used
+     Enter a string: 
+/home/student/func.c
+getuserinput
+     gets@@GLIBC_2.0
+crtstuff.c
+     puts@@GLIBC_2.0
+--$ strings -n 5 func | less
+func.c
+stddef.h
+types.h
+libio.h
+stdio.h
+GCC: (Ubuntu 7.5.0-3ubuntu1~18.04) 7.5.0
+
+#research the potential artifacts
+
+--Behavioral Analysis
+Enter a string:
+
+
+--Dynamic Analysis
+#use ghidra
+
+#gdb
+--$ gdp <binaryname>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
