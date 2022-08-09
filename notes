@@ -936,27 +936,137 @@ student@lin-ops:~$ nc -lvp 4444
 student@lin-ops:~$ python win_buffer_copy.py 
 
 
+======================================================================================================================
+
+
+## Day whatever -- Post exploitation
+
+CONTROL SOCKETS (CONFIG)
+Two main ways to configure
+Command Line Method:
+ssh -M -S /tmp/s root@<IP ADDRESS> <TUNNEL COMMANDS -R or -L>
+-o 'ControlPath=/tmp/s'
+-M -S /tmp/s
+
+Configuration File Method:
+/ssh_config
+HostName machine1.example.org
+ControlPath ~/.ssh/controlmasters/%r@%h:%p
+ControlMaster auto
+ControlPersist 10m
+
+
+USER ENUMERATION
+net user
+cat /etc/passwd
+
+
+PROCESS ENUMERATION
+tasklist /v
+ps -elf
+
+SERVICE ENUMERATION
+tasklist /svc
+chkconfig
+
+NETWORK CONNECTION ENUMERATION
+ipconfig /all
+ifconfig -a
+
+DATA EXFILTRATION
+Logging
+<command> | tee
+ 
+Obfuscation
+<command> | %{$_ -replace 'a','b' -replace 'b','c' -replace 'c','d'} > translated.out certutil
+<command> | tr 'a-zA-Z0-9' 'b-zA-Z0-9a' > shifted.txt
+<command> | base64
+
+Encryption Transport Methods
+scp
+
+Jobs
+/etc/crontab
+/var/spool/crontab
+
+Logs
+/etc/rsyslog.conf
+/etc/rsyslog.d
+
+##Windows
+
+#user
+net user
+
+#read the reg keys
+reg query
+
+#query services
+sc query 
+get_wmiobject win32_service
+get-wmiobject -list
+get-wmiobject -class win32_process
 
 
 
 
 
 
+egrep -v '10:49*| 15:15:15' auth.log > auth.log2; cat auth.log2 > auth.log; rm auth.log2 +
+cp auth.log > auth.log2; sed -i 's/10.16.10.93/136.132.1.1/g' auth.log2; cat auth.log2 > auth.log +
+CLEAN - YOUR TURN
+1) Create a failed ssh log on your RE_Linux.
+
+2) Utilizing the command line clean the log of the assocated log entries of the failed ssh event.
+
+3) Maintain log files orignal Inode
+
+TIMESTOMP NIX
+Access: updated when opened or used (grep, ls, cat, etc)
+
+Modify: update content of file or saved
+
+Change: file attribute change, file modified, moved, owner, permission
 
 
 
 
 
+=======================================================================================================
+
+#suid
+find / -type f -perm /4000 -ls 2>/dev/null
+
+#sgid
+find / -type f -perm /2000 -ls 2>/dev/null
+
+#both
+find / -type f -perm /6000 -ls 2>/dev/null
 
 
+#find kernel version
+uname -a
 
+cat /proc/version
 
+dmesg | grep linux
 
+#not logging commands
+cat .bash_history
+unset HISTFILE
+echo "" ? .bash_history
 
+#logs
+cd /var/log
+cat lastlog
+sudo cat btmp
 
+lslogins
+lslogins wtmp
 
+lastlog
 
-
+lastb
 
 
 
