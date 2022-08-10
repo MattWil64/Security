@@ -1162,12 +1162,29 @@ Right-clicking inside the directory to see if you can create things
   
   restart machine
 
+Commands to escalate our privileges:
+-Add a new user, join them to admin group and remote desktop group
+--> net user <username> <password> /add
+--> net localgroup Administrators <username> /add
+
+-add existing user to admin group and remote desktop group
+-
+
+2) Schedule Tasks
+
+Task schefuler
+General Tab > Security Options  > SYSTEM
+Triggers Tab > Trigger/Details: Desireable (At logon, At startup, At log on of any user) , status: Enabled
+Action Tab > Action: Start a program, Details: <writeable directories!>
 
 
-#Schedule Tasks
 --Binary Replacement
+#if you can manipulate the binary then use this
 --DLL Hijacking
-#Event Log
+#if you can't then use this
+
+
+3) Event Log
 --Requires elevated privileges to look at certaun logs (Security)
 #Auditpol (Security policies)
 --Requires elevated privileges
