@@ -1183,14 +1183,20 @@ Action Tab > Action: Start a program, Details: <writeable directories!>
 --DLL Hijacking
 #if you can't then use this
 
+#Refrence back to complete this step
 
 3) Event Log
 --Requires elevated privileges to look at certaun logs (Security)
-#Auditpol (Security policies)
+
+ --Auditpol (Security policies)
 --Requires elevated privileges
 
-
-
+ #need an administrator shell
+ [cmd] auditpol /get /category:*
+ 
+ Local security policy  #in search bar
+ #actual configuration of everything
+ 
 
 
 
