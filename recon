@@ -1,1 +1,12 @@
-Host Discovery (ping sweep)
+1. Host Discovery (ping sweep)
+   for i in {1..254} ;do (ping -c 1 192.168.65.$i | grep "bytes from" &) ;done
+   
+2. Host Enumeration (Port scanning)
+   nmap -Pn -T4 <ip> -p-
+   nmap -Pn <ip> -T4 -p 21-23,80 --min-rate 8000
+   nmap -Pn <ip> -T4 -p- --min-rate 8000
+   
+3. Host Interrogration (service)
+   nmap -Pn -T5 -sV <ip> -p <port/ports>
+   nc <ip> <port>
+   nmap -Pn -T5 --script banner.nse <ip> -p <port>
