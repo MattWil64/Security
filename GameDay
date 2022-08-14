@@ -30,6 +30,7 @@
 
 2.robots.txt
   go here and if there are more in here then go to them
+  nikto -h <ip>
   
   
 ##Web Exploitation
@@ -647,6 +648,8 @@ cat /etc/crontab	~ do not need privileges to view, scripts are placed in here to
 syslog, syslog-ng, rsyslog
 cd /var/log	~ where logs are stored
 /var/log/auth.log	~ where authentication is logged, requires privileges
+
+/usr/share/cctc
 
 ===============================================================================================================================================
 
