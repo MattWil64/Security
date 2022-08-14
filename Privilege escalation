@@ -17,7 +17,7 @@ find / -type f -perm /6000 -ls 2>/dev/null
 #not logging commands
 cat .bash_history
 unset HISTFILE
-echo "" ? .bash_history
+echo "" > .bash_history
 
 #logs
 cd /var/log
